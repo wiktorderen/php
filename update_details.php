@@ -7,10 +7,11 @@
     // ustaw zmienne dla bԥd󷠰rzy sprawdzaniu poprawnosci 
     $plastikError = null;
         $torpedkiError = null;
-    
+        $cenaError = null;
     // ustaw zmienne pobrane z tablicy $_POST
     $plastik = $_POST['plastik'];
        $torpedki = $_POST['torpedki'];
+       $cena = $_POST['cena'];
     
     // walidacja danych
     $valid = true;
@@ -22,14 +23,19 @@
       $torpedkiError= 'czy są torpedki';
       $valid = false;
     }  
+
+    if (empty($cena)) {
+        $cenaError= 'cena';
+        $valid = false;
+      }  
     
     // aktualizuj dane
     if ($valid) {
             $pdo = Database::connect();
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $sql = "UPDATE szczegoly SET plastik = ?, torpedki = ? WHERE id_detalu = ?";
+            $sql = "UPDATE szczegoly SET plastik = ?, torpedki = ?, cena = ? WHERE id_detalu = ?";
             $q = $pdo->prepare($sql);
-            $q->execute(array($plastik,$torpedki,$id_detalu));
+            $q->execute(array($plastik,$torpedki,$cena,$id_detalu));
             Database::disconnect();
             header("Location: index.php");
         }
@@ -42,6 +48,7 @@
         $data = $q->fetch(PDO::FETCH_ASSOC);
         $plastik = $data['plastik'];
         $torpedki = $data['torpedki'];
+        $cena = $data['cena'];
         Database::disconnect();
     }
 ?>
@@ -81,6 +88,16 @@
                             <input name="torpedki" type="text" class="form-control"  placeholder="czy są torpedki" value="<?php echo !empty($torpedki)?$torpedki:'';?>">
                             <?php if (!empty($torpedkiError)): ?>
                                 <span class="text-danger"><?php echo $torpedkiError;?></span>
+                            <?php endif; ?>
+                        </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-1 control-label">Cena</label>
+                    <div class="col-sm-5">
+                            <input name="cena" type="text" class="form-control"  placeholder="cena" value="<?php echo !empty($cena)?$cena:'';?>">
+                            <?php if (!empty($cenaError)): ?>
+                                <span class="text-danger"><?php echo $cenaError;?></span>
                             <?php endif; ?>
                         </div>
             </div>

@@ -5,12 +5,14 @@
         // inicjalizowanie wartości zmiennych kontroli poprawnosci wprowadzania 
 		$plastikError = null;
         $torpedkiError = null;
+        $cenaError = null;
         $id_kostki = null;
 
         // wartości tablicy POST
         $id_kostki = $_POST['id_kostki'];
 		$plastik = $_POST['plastik'];
         $torpedki = $_POST['torpedki'];
+        $cena=$_POST['cena'];
         
         // walidacja kolejnych zmiennych pól formularza
         $valid = true;
@@ -28,15 +30,19 @@
            $torpedkiError = 'czy są torpedki';
             $valid = false;
         }
+        if (empty($cena)) {
+            $torpedkiError = 'cena';
+             $valid = false;
+         }
 
 		// wprowadź dane
         if ($valid) {
 			echo "ok- wprowadzenie";
             $pdo = Database::connect();
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $sql = "INSERT INTO szczegoly (id_kostki,plastik,torpedki) values(?,?,?)";
+            $sql = "INSERT INTO szczegoly (id_kostki,plastik,torpedki,cena) values(?,?,?,?)";
             $q = $pdo->prepare($sql);
-            $q->execute(array($id_kostki,$plastik, $torpedki));
+            $q->execute(array($id_kostki,$plastik, $torpedki,$cena));
             Database::disconnect();
             header("Location: index.php");
         }
@@ -92,7 +98,17 @@
                                 <span class="text-danger"><?php echo $torpedkiError;?> </span>
                   <?php endif; ?>
 			    </div>
-            </div>   			
+            </div>   	
+
+                         <div class="form-group row">
+                <label class="col-sm-1 control-label">Cena</label>
+                <div class="col-sm-5">
+                  <input name="cena" type="text"  class="form-control" placeholder="cena" value="<?php echo !empty($cena)?$cena:'';?>">
+				  <?php if (!empty($cenaError)): ?>
+                                <span class="text-danger"><?php echo $cenaError;?> </span>
+                  <?php endif; ?>
+			    </div>
+            </div>   		
                       
             <div class="form-actions">
                 <button type="submit" class="btn btn-success">Zapisz</button>
